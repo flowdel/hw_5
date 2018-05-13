@@ -134,7 +134,7 @@ if __name__ == '__main__':
     
     parser.add_argument('-i', '--infile', help='fasta file', type=str, required=True)
     parser.add_argument('-outgraph', '--outfile_graph', help='outfile with graph in .dot format', type=str, required=True)
-    parser.add_argument('-outfasta', '--outfile_fasta', help='outfile with assembly in .fasta format', type=str, required=True)
+    parser.add_argument('-outfasta', '--outfile_fasta', help='outfile with assembly in .fasta format', type=str)
     parser.add_argument('-k', '--kmer_size', help='kmer size', type=int, default=15)
     parser.add_argument('-v', '--view', help='choose full or nick view', type=str, required=True)
     parser.add_argument('-c', '--collapse', help='choose full or nick view', action='store_true', default=True)
@@ -160,4 +160,5 @@ if __name__ == '__main__':
         my_graph.collapse_graph()
     my_graph.calc_final_edge_coverage()
     my_graph.graphviz(view, fgraph)
-    my_graph.write_fasta(fasta, k)
+    if collapse:
+        my_graph.write_fasta(fasta, k)
