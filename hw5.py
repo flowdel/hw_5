@@ -64,7 +64,7 @@ class Graph:
             for next_vertex in self.vertices[current_vertex].out_edges.keys():
                 self.vertices[current_vertex].out_edges[next_vertex].calc_coverage(self.vertices[current_vertex].coverage,self.vertices[next_vertex].coverage)
     
-    def graphviz(self, view, outfile):
+    def graphviz(self, view, fgraph):
 
         for vertex in self.vertices:
             if view == 'full':
@@ -78,7 +78,7 @@ class Graph:
                     self.graph.edge(vertex, next_vertex, label = str(self.vertices[vertex].out_edges[next_vertex].coverage)+','+
                                     str(self.vertices[vertex].out_edges[next_vertex].n))
                     
-        self.graph.render(filename=outfile, view=True)
+        self.graph.render(filename=fgraph, view=True)
     
     def collapse_graph(self):
         
@@ -132,24 +132,24 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(description='Graph')
     
-    parser.add_argument('-f', '--file', help='fasta file', type=str, required=True)
-    parser.add_argument('-o', '--outfile', help='outfile with graph in .dot format', type=str, required=True)
-    parser.add_argument('-outfasta', '--outfile_fasta', help='outfile with assembly in fasta format', type=str, required=True)
+    parser.add_argument('-i', '--infile', help='fasta file', type=str, required=True)
+    parser.add_argument('-outgraph', '--outfile_graph', help='outfile with graph in .dot format', type=str, required=True)
+    parser.add_argument('-outfasta', '--outfile_fasta', help='outfile with assembly in .fasta format', type=str, required=True)
     parser.add_argument('-k', '--kmer_size', help='kmer size', type=int, default=15)
     parser.add_argument('-v', '--view', help='choose full or nick view', type=str, required=True)
     parser.add_argument('-c', '--collapse', help='choose full or nick view', action='store_true', default=True)
     
     
     args = parser.parse_args()
-    file = args.file
-    outfile = args.outfile
+    infile = args.infile
+    fgraph = args.outfile_graph
     k = args.kmer_size
     view = args.view
     collapse = args.collapse
-    fasta = args.outfasta
+    fasta = args.outfile_fasta
     my_graph = Graph(k)
     
-    with open(file, 'r') as handle:
+    with open(infile, 'r') as handle:
         for record in SeqIO.parse(handle, 'fasta'):
             read = str(record.seq)
             my_graph.add_read(read)
@@ -159,5 +159,5 @@ if __name__ == '__main__':
     if collapse:
         my_graph.collapse_graph()
     my_graph.calc_final_edge_coverage()
-    my_graph.graphviz(view, outfile)
+    my_graph.graphviz(view, fgraph)
     my_graph.write_fasta(fasta, k)
